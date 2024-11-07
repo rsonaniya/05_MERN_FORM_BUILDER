@@ -1,22 +1,19 @@
-import { useState } from "react";
-import HomePage from "./components/HomePage";
-import CreateForm from "./components/CreateForm";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./component/HomePage";
+import CreateForm from "./component/CreateForm";
+import EditForm from "./component/EditForm";
+import ViewForm from "./component/ViewForm";
+import { Box } from "@mui/material";
 
 export default function App() {
-  const [activePage, setActivePage] = useState("");
-
-  const handlePageChange = (newPage) => {
-    setActivePage(newPage);
-  };
-
   return (
-    <div className="w-full md:w-[700px] mx-auto mt-5">
-      {(activePage === "" || activePage === "home") && (
-        <HomePage onPageChange={handlePageChange} />
-      )}
-      {activePage === "createForm" && (
-        <CreateForm onPageChange={handlePageChange} />
-      )}
-    </div>
+    <Box sx={{ maxWidth: "900px" }} mx="auto" mt={2}>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/form/create" element={<CreateForm />} />
+        <Route path="/form/:id/edit" element={<EditForm />} />
+        <Route path="/form/:id" element={<ViewForm />} />
+      </Routes>
+    </Box>
   );
 }
