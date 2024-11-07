@@ -1,12 +1,16 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const formRouter = require("./routes/formRoutes.js");
 const connectToMongo = require("./utils/connectToMongo.js");
 
 const app = express();
 connectToMongo();
 app.use(express.json());
+app.use(cors());
+
 app.use("/api/forms", formRouter);
+
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal server error";
