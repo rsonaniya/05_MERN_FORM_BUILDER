@@ -7,7 +7,6 @@ const inputSchema = new mongoose.Schema({
   },
   placeholder: {
     type: String,
-    required: true,
   },
   type: {
     type: String,
