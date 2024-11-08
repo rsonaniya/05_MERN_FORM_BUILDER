@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function SingleForm({ form, onDeleteForm }) {
   return (
-    <Box component={Paper} p={2} maxWidth={300}>
+    <Box component={Paper} p={2} width={250}>
       <Typography variant="body1">{form.name}</Typography>
       <Box p={2}>
         <Link to={`/form/${form._id}`}>
@@ -12,9 +12,11 @@ export default function SingleForm({ form, onDeleteForm }) {
             View
           </Button>
         </Link>
-        <Button color="primary" size="small">
-          Edit
-        </Button>
+        <Link to={`/form/${form._id}/edit`}>
+          <Button color="primary" size="small">
+            Edit
+          </Button>
+        </Link>
         <Button
           color="error"
           size="small"

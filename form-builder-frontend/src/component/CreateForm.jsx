@@ -1,6 +1,8 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
@@ -67,7 +69,18 @@ export default function CreateForm() {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
+      alert(error.message);
     }
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const reorderedInputs = Array.from(formData.inputs);
+    const [movedItem] = reorderedInputs.splice(result.source.index, 1);
+    reorderedInputs.splice(result.destination.index, 0, movedItem);
+
+    setFormData((prev) => ({ ...prev, inputs: reorderedInputs }));
   };
 
   return (
@@ -100,38 +113,64 @@ export default function CreateForm() {
               onClick={() => setCurrentEditField("formTitle")}
             />
           </Box>
-          <Box display="flex" gap={1} flexWrap="wrap" justifyContent="center">
-            {formData.inputs.map((input, index) => (
-              <Box
-                key={index}
-                component={Paper}
-                p={1}
-                display="flex"
-                alignItems="center"
-                gap={1}
-              >
-                <TextField
-                  label={input.title}
-                  placeholder={input.placeholder}
-                  type={input.type}
-                  variant="standard"
-                  size="small"
-                  sx={{ width: "180px" }}
-                  disabled
-                />
-                <EditIcon
-                  color="primary"
-                  fontSize="small"
-                  onClick={() => setCurrentEditField(index)}
-                />
-                <DeleteIcon
-                  color="error"
-                  fontSize="small"
-                  onClick={() => handleDeleteFormInput(index)}
-                />
-              </Box>
-            ))}
-          </Box>
+
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="droppable-box" direction="vertical">
+              {(provided) => (
+                <Box
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                  display="flex"
+                  gap={1}
+                  flexWrap="wrap"
+                  justifyContent="center"
+                >
+                  {formData.inputs.map((input, index) => (
+                    <Draggable
+                      key={index}
+                      draggableId={`draggable-${index}`}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <Box
+                          component={Paper}
+                          p={1}
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <DragIndicatorIcon />
+                          <TextField
+                            label={input.title}
+                            placeholder={input.placeholder}
+                            type={input.type}
+                            variant="standard"
+                            size="small"
+                            sx={{ width: "180px" }}
+                            disabled
+                          />
+                          <EditIcon
+                            color="primary"
+                            fontSize="small"
+                            onClick={() => setCurrentEditField(index)}
+                          />
+                          <DeleteIcon
+                            color="error"
+                            fontSize="small"
+                            onClick={() => handleDeleteFormInput(index)}
+                          />
+                        </Box>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          </DragDropContext>
           <Box
             display="flex"
             flexDirection="column"
